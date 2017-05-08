@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Random</title>
+  <link rel="stylesheet" type="text/css" href="assets/css/reset.css">
+  <!--
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">-->
+  <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+  </head>
+  <body>
+
+    <!-- When we start playing the game, our HTML will be placed into this div. -->
+
+    <div id="game">
+      <p>Press a key to start!</p>
+
+      <div id="image"></div>
+    </div>
+  <script type="text/javascript">
+
+var wins = 0;
+var losses = 0;
+var guesses=15;
+var used_letters ="";
+var words = ["WATER","SKIES","CLIFF","OCEAN","LIGHT","CLIMB","BIRDS"];
+var word;
+var spaces= { "a": "_", "b": "_", "c": "_", "d": "_", "e": "_"};
+
+wordChoice();
+
+function wordChoice(){
+  var randomNumber=Math.floor(Math.random()*7);
+  spaces= { "a": "_", "b": "_", "c": "_", "d": "_", "e": "_"};
+  word = words[randomNumber];
+  guesses = 15;
+  used_letters="";
+};
+
+
+
+document.onkeyup = function (event) {
+
+var yourLetter = String.fromCharCode(event.keyCode).toUpperCase();
+
+used_letters = used_letters + " &nbsp; " + yourLetter + ",";
+
+if ((yourLetter.match(/[a-z]/i))&&(yourLetter.length === 1))
+{
+	if (yourLetter===word[0])
+	{
+		spaces.a = yourLetter;
+	}
+	if (yourLetter===word[1])
+	{
+		spaces.b = yourLetter;
+	}
+	if (yourLetter===word[2])
+	{
+		spaces.c = yourLetter;
+	}
+	if (yourLetter===word[3])
+	{
+		spaces.d = yourLetter;
+	}
+	if (yourLetter===word[4])
+	{
+		spaces.e = yourLetter;
+	}
+}
+guesses--;
+
+
+if ((spaces.a===word[0])&&(spaces.b===word[1])&&(spaces.c===word[2])&&(spaces.d===word[3]))
+{
+	alert(word);
+	wins++;
+	wordChoice();
+}
+
+if (guesses<1)
+{
+	alert("FAILURE!");
+	losses++;
+	wordChoice();
+}
+
+var html = "<h1><br>Hangman!<br><br>" + spaces.a + " " + spaces.b + " " + spaces.c + " " + spaces.d + " " + spaces.e + "</h1><br><br><h2>Wins: " + wins + "<br><br>" + "Losses: " + losses + "<br><br>" + "Guesses Left: " + guesses + "<br><br>" + "<br><br>Your Guesses So Far:<br> " + used_letters + "<br><br>";
+
+
+document.querySelector("#game").innerHTML = html; 
+
+}
+
+</script>
+</body>
+</html>
