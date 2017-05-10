@@ -2,7 +2,7 @@
 <html lang="en-us">
   <head>
     <meta charset="UTF-8">
-    <title>Random</title>
+    <title>Hangman Game</title>
   <link rel="stylesheet" type="text/css" href="assets/css/reset.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="assets/css/style.css">
@@ -11,105 +11,88 @@
 
     <div id="game">
     <!-- Beginning text -->
-      <p>Press a key to start!</p>
-
-      <div id="image"></div>
+      <p><h2>Press a key to start!</h2></p>
     </div>
   <script type="text/javascript">
 
 //Defines Global Variables
 var wins = 0;
 var losses = 0;
-var guesses=15;
+var guesses=5;
 var used_letters ="";
 //Sets up the potential answers to the game in an array 
-var words = ["WATER","SKIES","CLIFF","OCEAN","LIGHT","CLIMB","BIRDS"];
-//Sets up a variable that will later be used
-var word;
-//Sets up an array, starting with underscores
-var spaces= { "a": "_", "b": "_", "c": "_", "d": "_", "e": "_"};
-//Runs the function that chooses the target word
-wordChoice();
+var words = ["WATER","SKIING","CLIFFS","OCEAN","LIGHTS","CLIMBING","BIRDS","SKIES","HIKING","SNOW"];
+//Initiates a new game
+newGame();
 
-function wordChoice(){
-	//Initiates a random number
-  var randomNumber=Math.floor(Math.random()*7);
-  //Sets up a new array, starting with underscores
-  spaces= { "a": "_", "b": "_", "c": "_", "d": "_", "e": "_"};
-  //Chooses the "word" from the list of "words"
-  word = words[randomNumber];
-  //Resets the guesses after winning or losing
-  guesses = 15;
-  //Resets the list of guessed letters
-  used_letters="";
-};
+function newGame(){
+	//The spaces are cleared
+	spaces = [];
+	//The guesses are reset
+	guesses = 15;
+	//The used letters are reset
+	used_letters = "";
+	//A random number is initiated
+	 var randomNumber=Math.floor(Math.random()*(words.length));
+	 //The word is chosen based on the random number and the target words
+	 word = words[randomNumber];
 
-
-//Begins this function when a key is pressed
-document.onkeyup = function (event) {
-
-//Assigns the key pressed to the yourLetter variable
-var yourLetter = String.fromCharCode(event.keyCode).toUpperCase();
-//Extends the list of guessed letters with the key pressed  
-used_letters = used_letters + " &nbsp; " + yourLetter + ",";
-
- //Detects to see if the key pressed is a single letter in the alphabet
-if ((yourLetter.match(/[a-z]/i))&&(yourLetter.length === 1))
-{
-	//If the chosen letter is one of the target letters, that underscore(space) is replaced with the chosen letter 
-	if (yourLetter===word[0])
-	{
-		spaces.a = yourLetter;
-	}
-	if (yourLetter===word[1])
-	{
-		spaces.b = yourLetter;
-	}
-	if (yourLetter===word[2])
-	{
-		spaces.c = yourLetter;
-	}
-	if (yourLetter===word[3])
-	{
-		spaces.d = yourLetter;
-	}
-	if (yourLetter===word[4])
-	{
-		spaces.e = yourLetter;
-	}
-}
-//Reduces the guess by 1 after each letter pressed
-guesses--;
-
-//Detects to see if all the letter spaces have been filled
-if ((spaces.a===word[0])&&(spaces.b===word[1])&&(spaces.c===word[2])&&(spaces.d===word[3])&&(spaces.e===word[4]))
-{
-	//Alerts you when the word is complete
-	alert(word);
-	//Increases your wins by 1
-	wins++;
-	//Runs the function that chooses the target word
-	wordChoice();
+//The spaces are filled with underscores
+for (beginning=0; beginning < word.length; beginning++)
+	{spaces.push("_");}
 }
 
-//When you run out of guesses...
-if (guesses<1)
+//Begins the function when a key is pressed
+document.onkeyup = function (event) 
 {
-	//Alerts you to tell you that you have lost
-	alert("FAILURE!");
-	//Increases your losses by 1
-	losses++;
-	//Runs the function that chooses a target word
-	wordChoice();
-}
+	var yourLetter = String.fromCharCode(event.keyCode).toUpperCase();
+	var counter =  0;
+	//Extends the used letters with your chosen letter
+	used_letters = used_letters + " &nbsp; " + yourLetter + ",";
+
+
+	//The number of letters in the word are the times this cycle happens
+	for (i=0; i < word.length; i++)
+	{
+		//When a filled letter equals a target letter, you get credit for it
+		if(word[i] === spaces[i])
+		{
+			counter++;
+		}
+
+		//When your chosen letter equals a target letter, the space is filled with the letter
+		if (word[i] === yourLetter)
+		{
+			spaces.fill(yourLetter, i, i+1);
+		}
+
+		//If you have credit for the whole word, you win
+		if (counter === word.length)
+		{
+			alert(word);
+			wins++;
+			newGame();	
+		
+		}
+		//You lose if you run out of guesses
+		if (guesses < 1)
+		{
+			alert("You lost!");
+			losses++;
+			newGame();
+		}
+	}
+	//You lose a guess each time a key is pressed
+	guesses--;
 
 //Sets up the text used near the top of the program that has the id "game"
-var html = "<h1><br>Hangman!<br><br>" + spaces.a + " " + spaces.b + " " + spaces.c + " " + spaces.d + " " + spaces.e + "</h1><br><br><h2>Wins: " + wins + "<br><br>" + "Losses: " + losses + "<br><br>" + "Guesses Left: " + guesses + "<br><br>" + "<br><br>Your Guesses So Far:<br> " + used_letters + "<br><br>";
+var html = "<h1><br>Hangman!<br><br>" + spaces.join(" ") + "</h1><br><br><h2>Wins: " + wins + "<br><br>" + "Losses: " + losses + "<br><br>" + "Guesses Left: " + guesses + "<br><br>" + "<br><br>Your Guesses So Far:<br> " + used_letters + "<br><br>";
 
 //Connects the html variable to the "game" id
 document.querySelector("#game").innerHTML = html; 
 
 }
+
 
 </script>
 </body>
